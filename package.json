@@ -2,9 +2,13 @@
   "name": "tunneljs",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "directories": {
+    "test": "test"
+  },
   "scripts": {
-    "build": "./node_modules/.bin/webpack --config ./build/webpack/webpack.config"
+    "test": "mocha -r ts-node/register test/**/*.ts"
   },
   "repository": {
     "type": "git",
@@ -18,6 +22,7 @@
   },
   "homepage": "https://github.com/alexeveritt/tunneljs#readme",
   "dependencies": {
+    "jsemitter": "^1.0.2",
     "ts-loader": "^4.4.1",
     "typescript": "^2.9.2",
     "webpack": "^4.12.0",

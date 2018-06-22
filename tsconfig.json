@@ -1,9 +1,7 @@
 {
   "compilerOptions": {
-    "target": "es2015",
+    "target": "ES5",
     "module": "commonjs",
-    "allowJs": true,
-    "moduleResolution": "node",
     "isolatedModules": false,
     "removeComments": true,
     "outDir": "./dist",
@@ -15,12 +13,7 @@
     "strictNullChecks": true,
     "preserveConstEnums": true,
     "sourceMap": true,
-    "baseUrl": "./",
-    "paths": {
-      "@src/*": [
-        "./src/*"
-      ]
-    }
+    "declaration": true
   },
   "lib": [
     "ES6",

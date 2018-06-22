@@ -1,18 +1,18 @@
-import {EventEmitter} from "@src/event-emitter";
+import {JSEmitter} from "jsemitter";
 
 interface IQueueEvent {
     payload: string;
 }
 
 
-export class Host extends EventEmitter {
+export class Host extends JSEmitter {
 
     private isTunnelReady = false;
     private eventQueue: IQueueEvent[] = [];
 
     constructor(private iframeId: string, private targetOrigin: string = '*') {
         super();
-        this.on('ready', this.onReady)
+        this.on('__jstunnel-ready', this.onReady)
         window.addEventListener("message", this.onMessage, false);
     }
 

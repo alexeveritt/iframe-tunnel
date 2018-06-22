@@ -1,7 +1,7 @@
-import {EventEmitter} from "@src/event-emitter";
+import {JSEmitter} from "jsemitter";
 
 
-export class Client extends EventEmitter {
+export class Client extends JSEmitter {
     constructor(private targetOrigin: string = '*') {
         super();
         window.addEventListener("message", this.onMessage, false);
