@@ -1,5 +1,5 @@
 {
-  "name": "iframetunnel",
+  "name": "iframe-tunnel",
   "version": "1.0.0",
   "description": "Easily communicate through an IFrame with an event emitter style interface",
   "main": "dist/index.js",
