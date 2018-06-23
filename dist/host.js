@@ -20,7 +20,7 @@ var Host = (function (_super) {
         _this.targetOrigin = targetOrigin;
         _this.isTunnelReady = false;
         _this.eventQueue = [];
-        _this.on('ready', _this.onReady);
+        _this.on('__jstunnel-ready', _this.onReady);
         window.addEventListener("message", _this.onMessage, false);
         return _this;
     }

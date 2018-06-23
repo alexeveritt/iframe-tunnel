@@ -17,6 +17,8 @@ export function connect(target: Target, options: TunnelOptions): Tunnel {
 
 export interface Tunnel {
     sendMessage(key: string, data?: string | object): void
+
+    onMessage(key: string, callback: (data?: string | object) => void)
 }
 
 export interface TunnelOptions {
@@ -25,15 +27,44 @@ export interface TunnelOptions {
 }
 
 export class ClientTunnel extends JSEmitter implements Tunnel {
+    private targetOrigin = '*';
 
     constructor(options: TunnelOptions) {
         super();
-       // window.addEventListener("message", this.onMessage, false);
+
+        // this.on('__jstunnel_ready', this.onReady);
+        window.addEventListener("message", this.onFrameMessage, false);
+        this.sendMessage('__jstunnel_ready');
     }
+
 
     public sendMessage(key: string, data?: string | object): void {
+        const isText = typeof data === 'string';
+
+        const payload = isText ? data as string : JSON.stringify(data);
+        window.parent.postMessage(payload, this.targetOrigin)
     }
 
+    public onMessage(key: string, callback: (data?: string | object) => void) {
+        this.on(key, callback);
+    }
+
+    private onFrameMessage(event) {
+        if (this.targetOrigin !== '*' && event.origin !== this.targetOrigin) {
+            return;
+        }
+
+        if (event.data) {
+            try {
+                // convert to string or object // add some meta to describe type
+                const message = JSON.parse(event.data);
+                this.emit(message.key, message.data);
+            }
+            catch (ex) {
+                // probably invalid json data
+            }
+        }
+    }
 }
 
 export class HostTunnel extends JSEmitter implements Tunnel {
@@ -42,7 +73,7 @@ export class HostTunnel extends JSEmitter implements Tunnel {
     private eventQueue: IQueueEvent[] = [];
     private targetOrigin = '*';
     private readonly iframeId: string;
-    private iframeElement: HTMLIFrameElement
+    private iframeElement: HTMLIFrameElement;
     private reservedKeys = {
         __jstunnel_ready: 1
     };
@@ -54,8 +85,8 @@ export class HostTunnel extends JSEmitter implements Tunnel {
         }
         this.iframeId = options.iframeId;
 
-        this.on('__jstunnel_ready', this.onReady)
-        window.addEventListener("message", this.onMessage, false);
+        this.on('__jstunnel_ready', this.onReady);
+        window.addEventListener("message", this.onFrameMessage, false);
     }
 
     public sendMessage(key: string, data?: string | object): void {
@@ -64,8 +95,18 @@ export class HostTunnel extends JSEmitter implements Tunnel {
             throw new Error('Invalid key, reserved');
         }
 
+        const isText = typeof data === 'string';
+
+        const payload = isText ? data as string : JSON.stringify(data);
+
+        let queueEvent: IQueueEvent = {payload, isText};
+        this.isTunnelReady ? this.processQueueEvent(queueEvent) : this.eventQueue.push(queueEvent);
     }
 
+
+    public onMessage(key: string, callback: (data?: string | object) => void) {
+        this.on(key, callback);
+    }
 
     private onReady() {
         this.isTunnelReady = true;
@@ -92,7 +133,7 @@ export class HostTunnel extends JSEmitter implements Tunnel {
         }
     }
 
-    private onMessage(event) {
+    private onFrameMessage(event) {
         if (this.targetOrigin !== '*' && event.origin !== this.targetOrigin) {
             return;
         }

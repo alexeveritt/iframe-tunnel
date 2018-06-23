@@ -10,5 +10,6 @@ interface TunnelMessage {
 }
 
 interface IQueueEvent {
+    isText:boolean;
     payload: string;
 }
