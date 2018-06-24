@@ -1,0 +1,5 @@
+.npmignore
+/browser/
+/.idea/
+/test/
+/examples/

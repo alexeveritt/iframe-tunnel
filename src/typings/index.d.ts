@@ -1,15 +1,9 @@
-declare const enum Target {
-    Client = 0,
-    Host = 1
-}
-
-
 interface TunnelMessage {
-    key: string;
-    data?: string | object;
+  key: string;
+  data?: string | object;
 }
 
-interface IQueueEvent {
-    isText:boolean;
-    payload: string;
+interface QueueEvent {
+  isText: boolean;
+  payload: string;
 }

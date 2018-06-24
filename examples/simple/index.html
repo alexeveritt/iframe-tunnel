@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+</head>
+<body>
+<div>
+  <label>This is the host</label>
+  <input id="textmessage" type="text"/>
+  <button onclick="send">Send to Client</button>
+</div>
+<div>FrameMessage: <span id="framemessage"></span></div>
+<iframe id="some-iframe" src="./simple/client.html"></iframe>
+
+<script src="./simple/iframe-tunnel.js"></script>
+<script>
+    var tunnel = HostTunnel.connect({iframeId: 'some-iframe'});
+    tunnel.onMessage('message', onMessage);
+
+    function send() {
+        var textMessage = document.getElementById('textmessage').value;
+        tunnel.sendMessage(textMessage);
+    }
+
+    function onMessage(data) {
+        document.getElementById('framemessage').innerHTML = data;
+    }
+</script>
+</body>
+</html>
