@@ -1,5 +1,8 @@
 import { JSEmitter } from 'jsemitter';
 import { Tunnel, TunnelOptions } from './index';
+import { log } from './utils/logger';
+import { packMessage, unPackMessage } from './utils/packer';
+import { attachDOMMessageEvent } from './utils/events';
 
 export class HostTunnel extends JSEmitter implements Tunnel {
   private isTunnelReady = false;
@@ -19,7 +22,8 @@ export class HostTunnel extends JSEmitter implements Tunnel {
     this.iframeId = options.iframeId;
 
     this.on('__jstunnel_ready', this.onReady);
-    window.addEventListener('message', this.onFrameMessage, false);
+    attachDOMMessageEvent(this.onFrameMessage);
+    //window.addEventListener('message', this.onFrameMessage, false);
   }
 
   public sendMessage(key: string, data?: string | object): void {
@@ -28,9 +32,10 @@ export class HostTunnel extends JSEmitter implements Tunnel {
     }
 
     const isText = typeof data === 'string';
-
-    const payload = isText ? (data as string) : JSON.stringify(data);
-
+    log(`Sending clent message: ${isText ? data : JSON.stringify(data)}`);
+    // const payload = isText ? (data as string) : JSON.stringify(data);
+    const payload = packMessage(key, data);
+    log(`host to client payload: ${payload}`);
     const queueEvent: QueueEvent = { payload, isText };
     this.isTunnelReady
       ? this.processQueueEvent(queueEvent)
@@ -42,11 +47,13 @@ export class HostTunnel extends JSEmitter implements Tunnel {
   }
 
   private onReady() {
+    log('Host: Tunnel Ready');
     this.isTunnelReady = true;
     this.processQueuedEvents();
   }
 
   private processQueueEvent(evt: QueueEvent): void {
+    log('Host: processQueueEvent');
     if (this.iframeId) {
       if (!this.iframeElement) {
         this.iframeElement = window.document.getElementById(
@@ -64,6 +71,7 @@ export class HostTunnel extends JSEmitter implements Tunnel {
 
   private processQueuedEvents(): void {
     if (this.isTunnelReady) {
+      log('Host: processQueueEvent');
       if (this.eventQueue && this.eventQueue.length > 0) {
         this.eventQueue.forEach(evt => this.processQueueEvent(evt));
       }
@@ -72,18 +80,14 @@ export class HostTunnel extends JSEmitter implements Tunnel {
   }
 
   private onFrameMessage(event) {
-    if (this.targetOrigin !== '*' && event.origin !== this.targetOrigin) {
-      return;
-    }
+    log('onFrameMessage host: ' + JSON.stringify(event));
+    // if (this.targetOrigin !== '*' && event.origin !== this.targetOrigin) {
+    //   return;
+    // }
 
     if (event.data) {
-      try {
-        // convert to string or object // add some meta to describe type
-        const message = JSON.parse(event.data);
-        this.emit(message.key, message.data);
-      } catch (ex) {
-        // probably invalid json data
-      }
+      const message = unPackMessage(event.data);
+      this.emit(message.key, message.data);
     }
   }
 }

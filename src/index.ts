@@ -1,10 +1,6 @@
 import { ClientTunnel } from './client-tunnel';
 import { HostTunnel } from './host-tunnel';
 
-export function connect(options: TunnelOptions): Tunnel {
-  return options.iframeId ? new HostTunnel(options) : new ClientTunnel(options);
-}
-
 export interface Tunnel {
   sendMessage(key: string, data?: string | object): void;
 
@@ -14,4 +10,8 @@ export interface Tunnel {
 export interface TunnelOptions {
   iframeId?: string;
   targetOrigin?: string;
+}
+
+export function connect(options: TunnelOptions): Tunnel {
+    return options.iframeId ? new HostTunnel(options) : new ClientTunnel(options);
 }

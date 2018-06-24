@@ -8,17 +8,18 @@
 <div>
   <label>This is the client</label>
   <input id="textmessage" type="text"/>
-  <button onclick="send">Send to Host</button>
+  <button onclick="send()">Send to Host</button>
 </div>
 <div>FrameMessage: <span id="framemessage"></span></div>
 
-<script src="./simple/iframe-tunnel.js"></script>
+<script src="../iframe-tunnel.js"></script>
 <script>
-    var tunnel = HostTunnel.connect({});
+    var tunnel = window.IFrameTunnel.connect({});
     tunnel.onMessage('message', onMessage);
 
     function send() {
         var textMessage = document.getElementById('textmessage').value;
+        console.log('Sending message from client: ' + textMessage);
         tunnel.sendMessage(textMessage);
     }
 

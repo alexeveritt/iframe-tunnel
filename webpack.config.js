@@ -1,10 +1,9 @@
-
 const path = require('path');
 
 module.exports = {
     entry: path.join(__dirname, 'src/index.ts'),
     target: 'web',
-    mode: 'production',
+    mode: 'none',
     module: {
         rules: [
             {
@@ -19,6 +18,7 @@ module.exports = {
     },
     output: {
         filename: 'index.js',
-        path: path.join(__dirname, 'browser')
+        path: path.join(__dirname, 'browser'),
+        library: "IFrameTunnel"
     }
 };

@@ -11,35 +11,35 @@ var __extends = (this && this.__extends) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 var jsemitter_1 = require("jsemitter");
+var logger_1 = require("./utils/logger");
+var packer_1 = require("./utils/packer");
+var events_1 = require("./utils/events");
 var ClientTunnel = (function (_super) {
     __extends(ClientTunnel, _super);
     function ClientTunnel(options) {
         if (options === void 0) { options = {}; }
         var _this = _super.call(this) || this;
         _this.targetOrigin = '*';
-        window.addEventListener('message', _this.onFrameMessage, false);
+        events_1.attachDOMMessageEvent(_this.onFrameMessage);
+        logger_1.log('Client: Sending __jstunnel_ready message');
         _this.sendMessage('__jstunnel_ready');
         return _this;
     }
     ClientTunnel.prototype.sendMessage = function (key, data) {
         var isText = typeof data === 'string';
-        var payload = isText ? data : JSON.stringify(data);
+        logger_1.log("Sending clent message: " + (isText ? data : JSON.stringify(data)));
+        var payload = packer_1.packMessage(key, data);
+        logger_1.log("client to host payload: " + payload + " and target origin is " + this.targetOrigin);
         window.parent.postMessage(payload, this.targetOrigin);
     };
     ClientTunnel.prototype.onMessage = function (key, callback) {
         this.on(key, callback);
     };
     ClientTunnel.prototype.onFrameMessage = function (event) {
-        if (this.targetOrigin !== '*' && event.origin !== this.targetOrigin) {
-            return;
-        }
+        logger_1.log('onFrameMessage client: ' + JSON.stringify(event));
         if (event.data) {
-            try {
-                var message = JSON.parse(event.data);
-                this.emit(message.key, message.data);
-            }
-            catch (ex) {
-            }
+            var message = packer_1.unPackMessage(event.data);
+            this.emit(message.key, message.data);
         }
     };
     return ClientTunnel;

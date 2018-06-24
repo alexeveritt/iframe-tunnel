@@ -1,5 +1,8 @@
 import { JSEmitter } from 'jsemitter';
 import { Tunnel, TunnelOptions } from './index';
+import { log } from './utils/logger';
+import { packMessage, unPackMessage } from './utils/packer';
+import { attachDOMMessageEvent } from './utils/events';
 
 export class ClientTunnel extends JSEmitter implements Tunnel {
   private targetOrigin = '*';
@@ -8,14 +11,18 @@ export class ClientTunnel extends JSEmitter implements Tunnel {
     super();
 
     // this.on('__jstunnel_ready', this.onReady);
-    window.addEventListener('message', this.onFrameMessage, false);
+    attachDOMMessageEvent(this.onFrameMessage);
+    // window.addEventListener('message', this.onFrameMessage, false);
+    log('Client: Sending __jstunnel_ready message');
     this.sendMessage('__jstunnel_ready');
   }
 
   public sendMessage(key: string, data?: string | object): void {
     const isText = typeof data === 'string';
-
-    const payload = isText ? (data as string) : JSON.stringify(data);
+    log(`Sending clent message: ${isText ? data : JSON.stringify(data)}`);
+    //const payload = isText ? (data as string) : JSON.stringify(data);
+    const payload = packMessage(key, data);
+    log(`client to host payload: ${payload} and target origin is ${this.targetOrigin}`);
     window.parent.postMessage(payload, this.targetOrigin);
   }
 
@@ -24,18 +31,17 @@ export class ClientTunnel extends JSEmitter implements Tunnel {
   }
 
   private onFrameMessage(event) {
-    if (this.targetOrigin !== '*' && event.origin !== this.targetOrigin) {
-      return;
-    }
 
+    // TODO BIND THIS TO MESSAGE!!!
+
+    // if (this.targetOrigin !== '*' && event.origin !== this.targetOrigin) {
+    //   return;
+    // }
+
+    log('onFrameMessage client: ' + JSON.stringify(event));
     if (event.data) {
-      try {
-        // convert to string or object // add some meta to describe type
-        const message = JSON.parse(event.data);
-        this.emit(message.key, message.data);
-      } catch (ex) {
-        // probably invalid json data
-      }
+      const message = unPackMessage(event.data);
+      this.emit(message.key, message.data);
     }
   }
 }

@@ -11,6 +11,9 @@ var __extends = (this && this.__extends) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 var jsemitter_1 = require("jsemitter");
+var logger_1 = require("./utils/logger");
+var packer_1 = require("./utils/packer");
+var events_1 = require("./utils/events");
 var HostTunnel = (function (_super) {
     __extends(HostTunnel, _super);
     function HostTunnel(options) {
@@ -27,7 +30,7 @@ var HostTunnel = (function (_super) {
         }
         _this.iframeId = options.iframeId;
         _this.on('__jstunnel_ready', _this.onReady);
-        window.addEventListener('message', _this.onFrameMessage, false);
+        events_1.attachDOMMessageEvent(_this.onFrameMessage);
         return _this;
     }
     HostTunnel.prototype.sendMessage = function (key, data) {
@@ -35,7 +38,9 @@ var HostTunnel = (function (_super) {
             throw new Error('Invalid key, reserved');
         }
         var isText = typeof data === 'string';
-        var payload = isText ? data : JSON.stringify(data);
+        logger_1.log("Sending clent message: " + (isText ? data : JSON.stringify(data)));
+        var payload = packer_1.packMessage(key, data);
+        logger_1.log("host to client payload: " + payload);
         var queueEvent = { payload: payload, isText: isText };
         this.isTunnelReady
             ? this.processQueueEvent(queueEvent)
@@ -45,10 +50,12 @@ var HostTunnel = (function (_super) {
         this.on(key, callback);
     };
     HostTunnel.prototype.onReady = function () {
+        logger_1.log('Host: Tunnel Ready');
         this.isTunnelReady = true;
         this.processQueuedEvents();
     };
     HostTunnel.prototype.processQueueEvent = function (evt) {
+        logger_1.log('Host: processQueueEvent');
         if (this.iframeId) {
             if (!this.iframeElement) {
                 this.iframeElement = window.document.getElementById(this.iframeId);
@@ -61,6 +68,7 @@ var HostTunnel = (function (_super) {
     HostTunnel.prototype.processQueuedEvents = function () {
         var _this = this;
         if (this.isTunnelReady) {
+            logger_1.log('Host: processQueueEvent');
             if (this.eventQueue && this.eventQueue.length > 0) {
                 this.eventQueue.forEach(function (evt) { return _this.processQueueEvent(evt); });
             }
@@ -68,16 +76,10 @@ var HostTunnel = (function (_super) {
         }
     };
     HostTunnel.prototype.onFrameMessage = function (event) {
-        if (this.targetOrigin !== '*' && event.origin !== this.targetOrigin) {
-            return;
-        }
+        logger_1.log('onFrameMessage host: ' + JSON.stringify(event));
         if (event.data) {
-            try {
-                var message = JSON.parse(event.data);
-                this.emit(message.key, message.data);
-            }
-            catch (ex) {
-            }
+            var message = packer_1.unPackMessage(event.data);
+            this.emit(message.key, message.data);
         }
     };
     return HostTunnel;
