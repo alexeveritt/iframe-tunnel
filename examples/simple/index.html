@@ -15,18 +15,18 @@
 
 <script src="./iframe-tunnel.js"></script>
 <script>
-    var tunnel = window.IFrameTunnel.connect({iframeId: 'some-iframe'});
-    tunnel.onMessage('message', onMessage);
+  var tunnel = window.IFrameTunnel.connect({iframeId: 'some-iframe'});
+  tunnel.onMessage('client-message', onMessage);
 
-    function send() {
-        var textMessage = document.getElementById('textmessage').value;
-        console.log('Sending message from host: ' + textMessage);
-        tunnel.sendMessage(textMessage);
-    }
+  function send() {
+    var textMessage = document.getElementById('textmessage').value;
+    console.log('Sending message from host: ' + textMessage);
+    tunnel.sendMessage('host-message', textMessage);
+  }
 
-    function onMessage(data) {
-        document.getElementById('framemessage').innerHTML = data;
-    }
+  function onMessage(data) {
+    document.getElementById('framemessage').innerHTML = data;
+  }
 </script>
 </body>
 </html>

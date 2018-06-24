@@ -127,7 +127,7 @@ var ClientTunnel = (function (_super) {
         if (options === void 0) { options = {}; }
         var _this = _super.call(this) || this;
         _this.targetOrigin = '*';
-        events_1.attachDOMMessageEvent(_this.onFrameMessage);
+        events_1.attachDOMMessageEvent(function (event) { return _this.onFrameMessage(event); });
         logger_1.log('Client: Sending __jstunnel_ready message');
         _this.sendMessage('__jstunnel_ready');
         return _this;
@@ -402,7 +402,7 @@ var HostTunnel = (function (_super) {
         }
         _this.iframeId = options.iframeId;
         _this.on('__jstunnel_ready', _this.onReady);
-        events_1.attachDOMMessageEvent(_this.onFrameMessage);
+        events_1.attachDOMMessageEvent(function (event) { return _this.onFrameMessage(event); });
         return _this;
     }
     HostTunnel.prototype.sendMessage = function (key, data) {

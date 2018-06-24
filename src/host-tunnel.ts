@@ -1,8 +1,8 @@
-import { JSEmitter } from 'jsemitter';
-import { Tunnel, TunnelOptions } from './index';
-import { log } from './utils/logger';
-import { packMessage, unPackMessage } from './utils/packer';
-import { attachDOMMessageEvent } from './utils/events';
+import {JSEmitter} from 'jsemitter';
+import {Tunnel, TunnelOptions} from './index';
+import {log} from './utils/logger';
+import {packMessage, unPackMessage} from './utils/packer';
+import {attachDOMMessageEvent} from './utils/events';
 
 export class HostTunnel extends JSEmitter implements Tunnel {
   private isTunnelReady = false;
@@ -22,7 +22,7 @@ export class HostTunnel extends JSEmitter implements Tunnel {
     this.iframeId = options.iframeId;
 
     this.on('__jstunnel_ready', this.onReady);
-    attachDOMMessageEvent(this.onFrameMessage);
+    attachDOMMessageEvent(event => this.onFrameMessage(event));
     //window.addEventListener('message', this.onFrameMessage, false);
   }
 
@@ -36,7 +36,7 @@ export class HostTunnel extends JSEmitter implements Tunnel {
     // const payload = isText ? (data as string) : JSON.stringify(data);
     const payload = packMessage(key, data);
     log(`host to client payload: ${payload}`);
-    const queueEvent: QueueEvent = { payload, isText };
+    const queueEvent: QueueEvent = {payload, isText};
     this.isTunnelReady
       ? this.processQueueEvent(queueEvent)
       : this.eventQueue.push(queueEvent);

@@ -30,7 +30,7 @@ var HostTunnel = (function (_super) {
         }
         _this.iframeId = options.iframeId;
         _this.on('__jstunnel_ready', _this.onReady);
-        events_1.attachDOMMessageEvent(_this.onFrameMessage);
+        events_1.attachDOMMessageEvent(function (event) { return _this.onFrameMessage(event); });
         return _this;
     }
     HostTunnel.prototype.sendMessage = function (key, data) {

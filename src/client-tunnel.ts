@@ -11,7 +11,7 @@ export class ClientTunnel extends JSEmitter implements Tunnel {
     super();
 
     // this.on('__jstunnel_ready', this.onReady);
-    attachDOMMessageEvent(this.onFrameMessage);
+    attachDOMMessageEvent(event=>this.onFrameMessage(event));
     // window.addEventListener('message', this.onFrameMessage, false);
     log('Client: Sending __jstunnel_ready message');
     this.sendMessage('__jstunnel_ready');
