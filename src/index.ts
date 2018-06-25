@@ -10,8 +10,13 @@ export interface Tunnel {
 export interface TunnelOptions {
   iframeId?: string;
   targetOrigin?: string;
+  waitForClient?: boolean;
 }
 
 export function connect(options: TunnelOptions): Tunnel {
-    return options.iframeId ? new HostTunnel(options) : new ClientTunnel(options);
+
+  //TODO Add a flag to allow client to defer ready state until completed any setup tasks
+  // Currently ready is based on the tunnel being connected
+
+  return options.iframeId ? new HostTunnel(options) : new ClientTunnel(options);
 }

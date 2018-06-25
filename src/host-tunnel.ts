@@ -23,7 +23,6 @@ export class HostTunnel extends JSEmitter implements Tunnel {
 
     this.on('__jstunnel_ready', this.onReady);
     attachDOMMessageEvent(event => this.onFrameMessage(event));
-    //window.addEventListener('message', this.onFrameMessage, false);
   }
 
   public sendMessage(key: string, data?: string | object): void {
@@ -33,7 +32,6 @@ export class HostTunnel extends JSEmitter implements Tunnel {
 
     const isText = typeof data === 'string';
     log(`Sending clent message: ${isText ? data : JSON.stringify(data)}`);
-    // const payload = isText ? (data as string) : JSON.stringify(data);
     const payload = packMessage(key, data);
     log(`host to client payload: ${payload}`);
     const queueEvent: QueueEvent = {payload, isText};
@@ -81,9 +79,6 @@ export class HostTunnel extends JSEmitter implements Tunnel {
 
   private onFrameMessage(event) {
     log('onFrameMessage host: ' + JSON.stringify(event));
-    // if (this.targetOrigin !== '*' && event.origin !== this.targetOrigin) {
-    //   return;
-    // }
 
     if (event.data) {
       const message = unPackMessage(event.data);

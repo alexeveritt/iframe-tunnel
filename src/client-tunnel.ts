@@ -5,24 +5,37 @@ import { packMessage, unPackMessage } from './utils/packer';
 import { attachDOMMessageEvent } from './utils/events';
 
 export class ClientTunnel extends JSEmitter implements Tunnel {
-  private targetOrigin = '*';
+  private readonly targetOrigin;
+  private initialised: boolean = false;
 
   constructor(options: TunnelOptions = {}) {
     super();
 
-    // this.on('__jstunnel_ready', this.onReady);
-    attachDOMMessageEvent(event=>this.onFrameMessage(event));
-    // window.addEventListener('message', this.onFrameMessage, false);
-    log('Client: Sending __jstunnel_ready message');
-    this.sendMessage('__jstunnel_ready');
+    this.targetOrigin = options.targetOrigin || '*';
+
+    attachDOMMessageEvent(event => this.onFrameMessage(event));
+
+    if (!options.waitForClient) {
+      log('Client: Sending __jstunnel_ready message');
+      this.sendMessage('__jstunnel_ready');
+      this.initialised = true;
+    }
+
   }
 
   public sendMessage(key: string, data?: string | object): void {
     const isText = typeof data === 'string';
-    log(`Sending clent message: ${isText ? data : JSON.stringify(data)}`);
-    //const payload = isText ? (data as string) : JSON.stringify(data);
+
+    if (!this.initialised && key === 'client-ready') {
+      this.sendMessage('__jstunnel_ready');
+      this.initialised = true;
+      return;
+    }
+
+    log(`Sending client message: ${isText ? data : JSON.stringify(data)}`);
     const payload = packMessage(key, data);
-    log(`client to host payload: ${payload} and target origin is ${this.targetOrigin}`);
+
+    // TODO replace with proxy for testing
     window.parent.postMessage(payload, this.targetOrigin);
   }
 
@@ -31,13 +44,6 @@ export class ClientTunnel extends JSEmitter implements Tunnel {
   }
 
   private onFrameMessage(event) {
-
-    // TODO BIND THIS TO MESSAGE!!!
-
-    // if (this.targetOrigin !== '*' && event.origin !== this.targetOrigin) {
-    //   return;
-    // }
-
     log('onFrameMessage client: ' + JSON.stringify(event));
     if (event.data) {
       const message = unPackMessage(event.data);

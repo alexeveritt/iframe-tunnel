@@ -1,6 +1,7 @@
 export function log(message: string) {
-  if (window && window['console']) {
-    const cs = window['console'];
+  const consoleProperty:string='console';
+  if (window && window[consoleProperty]) {
+    const cs = window[consoleProperty];
     if (cs) {
       cs.log(`${new Date()}: ${message} `);
     }

@@ -5,7 +5,7 @@ export function attachDOMMessageEvent(callback) {
       : 'attachEvent';
     const eventListener = window[supportedEventListener];
     const messageEvent =
-      supportedEventListener == 'attachEvent' ? 'onmessage' : 'message';
+      supportedEventListener === 'attachEvent' ? 'onmessage' : 'message';
 
     eventListener(messageEvent, callback, false);
   }
