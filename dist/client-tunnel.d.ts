@@ -5,5 +5,5 @@ export declare class ClientTunnel extends JSEmitter implements Tunnel {
     constructor(options?: TunnelOptions);
     sendMessage(key: string, data?: string | object): void;
     onMessage(key: string, callback: (data?: string | object) => void): void;
-    private onFrameMessage(event);
+    private onFrameMessage;
 }

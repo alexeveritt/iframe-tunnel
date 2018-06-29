@@ -10,8 +10,8 @@ export declare class HostTunnel extends JSEmitter implements Tunnel {
     constructor(options?: TunnelOptions);
     sendMessage(key: string, data?: string | object): void;
     onMessage(key: string, callback: (data?: string | object) => void): void;
-    private onReady();
-    private processQueueEvent(evt);
-    private processQueuedEvents();
-    private onFrameMessage(event);
+    private onReady;
+    private processQueueEvent;
+    private processQueuedEvents;
+    private onFrameMessage;
 }

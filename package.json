@@ -9,6 +9,8 @@
   },
   "scripts": {
     "browser-build": "./node_modules/.bin/webpack --config ./webpack.config.js",
+    "demo":"node ./examples/demo-server.js",
+    "refresh-examples":"./examples/./refresh.sh",
     "test": "mocha -r ts-node/register test/**/*.ts",
     "lint": "./node_modules/.bin/tslint -c tslint.json 'src/**/*.ts'",
     "lint-fix": "./node_modules/.bin/tslint -c tslint.json 'src/**/*.ts' --fix"

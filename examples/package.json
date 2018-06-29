@@ -2,9 +2,9 @@
   "name": "demo",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "demo-server.js",
   "scripts": {
-    "demo": "node index",
+    "demo": "node demo-server",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
