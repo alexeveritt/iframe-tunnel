@@ -10,7 +10,7 @@ echo "Building browser version..."
 npm run browser-build
 
 echo "Copying browser build into examples folder..."
-cp -R browser/index.js examples/iframe-tunnel.js
+cp -R browser/iframe-tunnel.js examples
 
 echo "Starting Demo Server..."
-npm run demo
+node examples/demo-server.js

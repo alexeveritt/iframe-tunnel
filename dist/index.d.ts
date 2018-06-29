@@ -5,5 +5,6 @@ export interface Tunnel {
 export interface TunnelOptions {
     iframeId?: string;
     targetOrigin?: string;
+    waitForClient?: boolean;
 }
-export declare function connect(options: TunnelOptions): Tunnel;
+export declare function connect(options?: TunnelOptions): Tunnel;

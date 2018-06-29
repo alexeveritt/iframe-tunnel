@@ -6,7 +6,7 @@ function attachDOMMessageEvent(callback) {
             ? 'addEventListener'
             : 'attachEvent';
         var eventListener = window[supportedEventListener];
-        var messageEvent = supportedEventListener == 'attachEvent' ? 'onmessage' : 'message';
+        var messageEvent = supportedEventListener === 'attachEvent' ? 'onmessage' : 'message';
         eventListener(messageEvent, callback, false);
     }
 }

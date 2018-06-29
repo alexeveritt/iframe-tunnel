@@ -28,5 +28,27 @@
     document.getElementById('framemessage').innerHTML = data;
   }
 </script>
+
+
+
+
+<script>
+  var tunnel = window.IFrameTunnel.connect({iframeId: 'some-iframe'});
+  tunnel.onMessage('client-message', data=>{
+    console.log('message recieved from client')
+  });
+
+  tunnel.sendMessage('host-message', 'Hello Client');
+
+
+
+  var tunnel = window.IFrameTunnel.connect();
+  tunnel.onMessage('host-message', data=>{
+    console.log('message recieved from host')
+  });
+
+  tunnel.sendMessage('client-message', 'Hello Host');
+
+</script>
 </body>
 </html>

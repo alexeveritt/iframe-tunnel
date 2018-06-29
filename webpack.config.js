@@ -17,7 +17,7 @@ module.exports = {
         extensions: ['.ts', '.js']
     },
     output: {
-        filename: 'index.js',
+        filename: 'iframe-tunnel.js',
         path: path.join(__dirname, 'browser'),
         library: "IFrameTunnel"
     }

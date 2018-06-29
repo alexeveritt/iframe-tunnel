@@ -19,17 +19,25 @@ var ClientTunnel = (function (_super) {
     function ClientTunnel(options) {
         if (options === void 0) { options = {}; }
         var _this = _super.call(this) || this;
-        _this.targetOrigin = '*';
+        _this.initialised = false;
+        _this.targetOrigin = options.targetOrigin || '*';
         events_1.attachDOMMessageEvent(function (event) { return _this.onFrameMessage(event); });
-        logger_1.log('Client: Sending __jstunnel_ready message');
-        _this.sendMessage('__jstunnel_ready');
+        if (!options.waitForClient) {
+            logger_1.log('Client: Sending __jstunnel_ready message');
+            _this.sendMessage('__jstunnel_ready');
+            _this.initialised = true;
+        }
         return _this;
     }
     ClientTunnel.prototype.sendMessage = function (key, data) {
         var isText = typeof data === 'string';
-        logger_1.log("Sending clent message: " + (isText ? data : JSON.stringify(data)));
+        if (!this.initialised && key === 'client-ready') {
+            this.sendMessage('__jstunnel_ready');
+            this.initialised = true;
+            return;
+        }
+        logger_1.log("Sending client message: " + (isText ? data : JSON.stringify(data)));
         var payload = packer_1.packMessage(key, data);
-        logger_1.log("client to host payload: " + payload + " and target origin is " + this.targetOrigin);
         window.parent.postMessage(payload, this.targetOrigin);
     };
     ClientTunnel.prototype.onMessage = function (key, callback) {

@@ -1,8 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 function log(message) {
-    if (window && window['console']) {
-        var cs = window['console'];
+    var consoleProperty = 'console';
+    if (window && window[consoleProperty]) {
+        var cs = window[consoleProperty];
         if (cs) {
             cs.log(new Date() + ": " + message + " ");
         }
