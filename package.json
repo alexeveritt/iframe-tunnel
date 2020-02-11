@@ -9,7 +9,7 @@
   },
   "scripts": {
     "browser-build": "./node_modules/.bin/webpack --config ./webpack.config.js",
-    "demo":"./examples/./refresh.sh",
+    "demo": "./examples/./refresh.sh",
     "test": "mocha -r ts-node/register test/**/*.ts",
     "lint": "./node_modules/.bin/tslint -c tslint.json 'src/**/*.ts'",
     "lint-fix": "./node_modules/.bin/tslint -c tslint.json 'src/**/*.ts' --fix"
@@ -40,7 +40,7 @@
     "tslint": "^5.10.0",
     "tslint-config-prettier": "^1.13.0",
     "typescript": "^2.9.2",
-    "webpack": "^4.12.0",
+    "webpack": "^4.41.5",
     "webpack-cli": "^3.0.8"
   }
 }
