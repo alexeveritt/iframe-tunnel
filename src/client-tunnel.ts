@@ -1,8 +1,8 @@
 import { JSEmitter } from 'jsemitter';
 import { Tunnel, TunnelOptions } from './index';
+import { attachDOMMessageEvent } from './utils/events';
 import { log } from './utils/logger';
 import { packMessage, unPackMessage } from './utils/packer';
-import { attachDOMMessageEvent } from './utils/events';
 
 export class ClientTunnel extends JSEmitter implements Tunnel {
   private readonly targetOrigin;
@@ -20,7 +20,6 @@ export class ClientTunnel extends JSEmitter implements Tunnel {
       this.sendMessage('__jstunnel_ready');
       this.initialised = true;
     }
-
   }
 
   public sendMessage(key: string, data?: string | object): void {

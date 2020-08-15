@@ -1,6 +1,6 @@
 {
   "name": "iframe-tunnel",
-  "version": "1.0.1",
+  "version": "1.0.3",
   "description": "Easily communicate through an IFrame with an event emitter style interface",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -10,7 +10,6 @@
   "scripts": {
     "browser-build": "./node_modules/.bin/webpack --config ./webpack.config.js",
     "demo": "./examples/./refresh.sh",
-    "test": "mocha -r ts-node/register test/**/*.ts",
     "lint": "./node_modules/.bin/tslint -c tslint.json 'src/**/*.ts'",
     "lint-fix": "./node_modules/.bin/tslint -c tslint.json 'src/**/*.ts' --fix"
   },
@@ -26,21 +25,15 @@
   },
   "homepage": "https://github.com/alexeveritt/tunneljs#readme",
   "dependencies": {
-    "jsemitter": "^1.0.2"
+    "jsemitter": "^1.0.6"
   },
   "devDependencies": {
-    "@types/chai": "^4.1.4",
-    "@types/mocha": "^5.2.2",
-    "@types/sinon": "^5.0.1",
-    "mocha": "^5.2.0",
     "prettier": "1.13.5",
-    "sinon": "^6.0.0",
-    "sinon-chai": "^3.2.0",
-    "ts-loader": "^4.4.1",
-    "tslint": "^5.10.0",
-    "tslint-config-prettier": "^1.13.0",
+    "ts-loader": "^4.5.0",
+    "tslint": "^5.20.1",
+    "tslint-config-prettier": "^1.18.0",
     "typescript": "^2.9.2",
-    "webpack": "^4.41.5",
-    "webpack-cli": "^3.0.8"
+    "webpack": "^4.44.1",
+    "webpack-cli": "^3.3.12"
   }
 }
