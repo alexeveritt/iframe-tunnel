@@ -23,10 +23,14 @@ var ClientTunnel = (function (_super) {
         if (options === void 0) { options = {}; }
         var _this = _super.call(this) || this;
         _this.initialised = false;
+        _this.loggingEnabled = false;
+        _this.loggingEnabled = options.enableLogging || false;
         _this.targetOrigin = options.targetOrigin || '*';
         events_1.attachDOMMessageEvent(function (event) { return _this.onFrameMessage(event); });
         if (!options.waitForClient) {
-            logger_1.log('Client: Sending __jstunnel_ready message');
+            if (_this.loggingEnabled) {
+                logger_1.log('Client: Sending __jstunnel_ready message');
+            }
             _this.sendMessage('__jstunnel_ready');
             _this.initialised = true;
         }
@@ -39,7 +43,9 @@ var ClientTunnel = (function (_super) {
             this.initialised = true;
             return;
         }
-        logger_1.log("Sending client message: " + (isText ? data : JSON.stringify(data)));
+        if (this.loggingEnabled) {
+            logger_1.log("Sending client message: " + (isText ? data : JSON.stringify(data)));
+        }
         var payload = packer_1.packMessage(key, data);
         window.parent.postMessage(payload, this.targetOrigin);
     };
@@ -47,7 +53,9 @@ var ClientTunnel = (function (_super) {
         this.on(key, callback);
     };
     ClientTunnel.prototype.onFrameMessage = function (event) {
-        logger_1.log('onFrameMessage client: ' + JSON.stringify(event));
+        if (this.loggingEnabled) {
+            logger_1.log('onFrameMessage client: ' + JSON.stringify(event));
+        }
         if (event.data) {
             var message = packer_1.unPackMessage(event.data);
             this.emit(message.key, message.data);

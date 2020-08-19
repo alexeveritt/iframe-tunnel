@@ -10,12 +10,14 @@ export class HostTunnel extends JSEmitter implements Tunnel {
   private targetOrigin = '*';
   private readonly iframeId: string;
   private iframeElement: HTMLIFrameElement;
+  private readonly loggingEnabled: boolean = false;
   private reservedKeys = {
     __jstunnel_ready: 1
   };
 
   constructor(options: TunnelOptions = {}) {
     super();
+    this.loggingEnabled = options.enableLogging || false;
     if (!options.iframeId) {
       throw new Error('No Iframe Id');
     }
@@ -31,9 +33,15 @@ export class HostTunnel extends JSEmitter implements Tunnel {
     }
 
     const isText = typeof data === 'string';
-    log(`Sending clent message: ${isText ? data : JSON.stringify(data)}`);
+    if (this.loggingEnabled) {
+      log(`Sending clent message: ${isText ? data : JSON.stringify(data)}`);
+    }
+
     const payload = packMessage(key, data);
-    log(`host to client payload: ${payload}`);
+    if (this.loggingEnabled) {
+      log(`host to client payload: ${payload}`);
+    }
+
     const queueEvent: QueueEvent = { payload, isText };
     this.isTunnelReady
       ? this.processQueueEvent(queueEvent)
@@ -45,19 +53,26 @@ export class HostTunnel extends JSEmitter implements Tunnel {
   }
 
   private onReady() {
-    log('Host: Tunnel Ready');
+    if (this.loggingEnabled) {
+      log('Host: Tunnel Ready');
+    }
+
     this.isTunnelReady = true;
     this.processQueuedEvents();
   }
 
   private processQueueEvent(evt: QueueEvent): void {
-    log('Host: processQueueEvent');
+    if (this.loggingEnabled) {
+      log('Host: processQueueEvent');
+    }
+
     if (this.iframeId) {
       if (!this.iframeElement) {
         this.iframeElement = window.document.getElementById(
           this.iframeId
         ) as HTMLIFrameElement;
       }
+
       if (this.iframeElement && this.iframeElement.contentWindow) {
         this.iframeElement.contentWindow.postMessage(
           evt.payload,
@@ -69,16 +84,22 @@ export class HostTunnel extends JSEmitter implements Tunnel {
 
   private processQueuedEvents(): void {
     if (this.isTunnelReady) {
-      log('Host: processQueueEvent');
+      if (this.loggingEnabled) {
+        log('Host: processQueueEvent');
+      }
+
       if (this.eventQueue && this.eventQueue.length > 0) {
         this.eventQueue.forEach(evt => this.processQueueEvent(evt));
       }
+
       this.eventQueue = [];
     }
   }
 
   private onFrameMessage(event) {
-    log('onFrameMessage host: ' + JSON.stringify(event));
+    if (this.loggingEnabled) {
+      log('onFrameMessage host: ' + JSON.stringify(event));
+    }
 
     if (event.data) {
       const message = unPackMessage(event.data);

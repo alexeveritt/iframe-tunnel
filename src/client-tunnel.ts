@@ -7,16 +7,19 @@ import { packMessage, unPackMessage } from './utils/packer';
 export class ClientTunnel extends JSEmitter implements Tunnel {
   private readonly targetOrigin;
   private initialised: boolean = false;
+  private readonly loggingEnabled: boolean = false;
 
   constructor(options: TunnelOptions = {}) {
     super();
-
+    this.loggingEnabled = options.enableLogging || false;
     this.targetOrigin = options.targetOrigin || '*';
 
     attachDOMMessageEvent(event => this.onFrameMessage(event));
 
     if (!options.waitForClient) {
-      log('Client: Sending __jstunnel_ready message');
+      if (this.loggingEnabled) {
+        log('Client: Sending __jstunnel_ready message');
+      }
       this.sendMessage('__jstunnel_ready');
       this.initialised = true;
     }
@@ -30,8 +33,9 @@ export class ClientTunnel extends JSEmitter implements Tunnel {
       this.initialised = true;
       return;
     }
-
-    log(`Sending client message: ${isText ? data : JSON.stringify(data)}`);
+    if (this.loggingEnabled) {
+      log(`Sending client message: ${isText ? data : JSON.stringify(data)}`);
+    }
     const payload = packMessage(key, data);
 
     // TODO replace with proxy for testing
@@ -43,7 +47,9 @@ export class ClientTunnel extends JSEmitter implements Tunnel {
   }
 
   private onFrameMessage(event) {
-    log('onFrameMessage client: ' + JSON.stringify(event));
+    if (this.loggingEnabled) {
+      log('onFrameMessage client: ' + JSON.stringify(event));
+    }
     if (event.data) {
       const message = unPackMessage(event.data);
       this.emit(message.key, message.data);

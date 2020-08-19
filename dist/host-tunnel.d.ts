@@ -6,6 +6,7 @@ export declare class HostTunnel extends JSEmitter implements Tunnel {
     private targetOrigin;
     private readonly iframeId;
     private iframeElement;
+    private readonly loggingEnabled;
     private reservedKeys;
     constructor(options?: TunnelOptions);
     sendMessage(key: string, data?: string | object): void;

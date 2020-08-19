@@ -11,6 +11,7 @@ export interface TunnelOptions {
   iframeId?: string;
   targetOrigin?: string;
   waitForClient?: boolean;
+  enableLogging?:boolean
 }
 
 export function connect(options: TunnelOptions = {}): Tunnel {
