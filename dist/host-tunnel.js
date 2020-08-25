@@ -95,8 +95,12 @@ var HostTunnel = (function (_super) {
             logger_1.log('onFrameMessage host: ' + JSON.stringify(event));
         }
         if (event.data) {
-            var message = packer_1.unPackMessage(event.data);
-            this.emit(message.key, message.data);
+            try {
+                var message = packer_1.unPackMessage(event.data);
+                this.emit(message.key, message.data);
+            }
+            catch (ex) {
+            }
         }
     };
     return HostTunnel;

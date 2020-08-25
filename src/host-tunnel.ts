@@ -102,8 +102,12 @@ export class HostTunnel extends JSEmitter implements Tunnel {
     }
 
     if (event.data) {
-      const message = unPackMessage(event.data);
-      this.emit(message.key, message.data);
+      try {
+        const message = unPackMessage(event.data);
+        this.emit(message.key, message.data);
+      } catch (ex) {
+        // invalid data
+      }
     }
   }
 }
